@@ -1,7 +1,19 @@
-# Algorithm-study
-### 알고리즘 공부를 위한 저장소입니다.
-<br>
+## Algorithm-study
+---
+* 알고리즘 공부를 위한 레포지토리입니다.
+<br><br>
 
-* commit 메세지: [문제 출처]/문제 이름(번호)/난이도
-    * [BOJ] - 백준
-    * [PGS] - 프로그래머스
+## 목차
+---
+* [기본 문제](BAEKJOON/basic)
+<br><br>
+
+## 사용 언어
+---
+* python
+<br><br>
+
+## 출처 웹사이트
+---
+* [프로그래머스](https://programmers.co.kr)
+* [백준](https://www.acmicpc.net)

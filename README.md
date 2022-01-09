@@ -4,6 +4,7 @@
 
 ## 목차
 * [기본 문제](BAEKJOON/basic)
+* [문자열](BAEKJOON/string)
 <br><br>
 
 ## 사용 언어

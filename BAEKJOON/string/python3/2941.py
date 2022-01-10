@@ -2,12 +2,9 @@
 
 cro_alpha = ['c=', 'c-', 'dz=', 'd-', 'lj', 'nj', 's=', 'z=']
 
-result = 0
 data = input()
 
 for i in cro_alpha:
-    result += data.count(i)
-    data = data.replace(i, ' ')
+    data = data.replace(i, '*')
 
-result += sum(map(lambda x: len(x), data.split()))
-print(result)
+print(len(data))

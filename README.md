@@ -9,6 +9,7 @@
 
 ## 사용 언어
 * python
+* javascript
 <br><br>
 
 ## 출처 웹사이트

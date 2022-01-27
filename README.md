@@ -6,6 +6,7 @@
 * [기본 문제](BAEKJOON/basic)
 * [문자열](BAEKJOON/string)
 * [수학](BAEKJOON/Math)
+* [완전 탐색](BAEKJOON/brute_force)
 <br><br>
 
 ## 사용 언어

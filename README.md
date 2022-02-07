@@ -7,6 +7,7 @@
 * [문자열](BAEKJOON/string)
 * [수학](BAEKJOON/Math)
 * [완전 탐색](BAEKJOON/brute_force)
+* [자료 구조](BAEKJOON/data_structure)
 <br><br>
 
 ## 사용 언어

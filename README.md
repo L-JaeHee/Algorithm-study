@@ -8,6 +8,7 @@
 * [수학](BAEKJOON/Math)
 * [완전 탐색](BAEKJOON/brute_force)
 * [자료 구조](BAEKJOON/data_structure)
+* [동적 프로그래밍](BAEKJOON/dynamic_programming)
 <br><br>
 
 ## 사용 언어

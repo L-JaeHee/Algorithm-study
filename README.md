@@ -9,6 +9,7 @@
 * [완전 탐색](BAEKJOON/brute_force)
 * [자료 구조](BAEKJOON/data_structure)
 * [동적 프로그래밍](BAEKJOON/dynamic_programming)
+* [트리](BAEKJOON/tree)
 <br><br>
 
 ## 사용 언어

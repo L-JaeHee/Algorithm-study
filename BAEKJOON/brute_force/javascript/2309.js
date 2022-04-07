@@ -4,25 +4,21 @@
 const fs = require('fs');
 const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
 const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(baekPath).toString().trim().split('\n').map(Number);
+let input = fs.readFileSync(localPath).toString().trim().split('\n').map(Number);
 
-const MAX = 9;
-let result;
+let result = [...input];
+const diff = input.reduce((sum, x) => sum + x) - 100;
+let status = 0;
 
-for (let a = 0; a < MAX - 6; a++) {
-  for (let b = a + 1; b < MAX - 5; b++) {
-    for (let c = b + 1; c < MAX - 4; c++) {
-      for (let d = c + 1; d < MAX - 3; d++) {
-        for (let e = d + 1; e < MAX - 2; e++) {
-          for (let f = e + 1; f < MAX - 1; f++) {
-            for (let g = f + 1; g < MAX; g++) {
-              if (input[a] + input[b] + input[c] + input[d] + input[e] + input[f] + input[g] === 100) {
-                result = [input[a], input[b], input[c], input[d], input[e], input[f], input[g]];
-              }
-            }
-          }
-        }
-      }
+for (let i = 0; i < result.length - 1; i++) {
+  if (status === 1) break;
+
+  for (let j = i + 1; j < result.length; j++) {
+    if (result[i] + result[j] === diff) {
+      result.splice(i, 1);
+      result.splice(j - 1, 1);
+      status++;
+      break;
     }
   }
 }

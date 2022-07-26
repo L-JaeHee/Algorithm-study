@@ -1,14 +1,16 @@
-# 2839: 설탕배달/브론즈 1
+""" 
+22.07.26
+BOJ : 2839 / 수학, 그리디, 다이나믹 프로그래밍
+"""
+n = int(input())
 
-N = int(input())
+five = n // 5
 
-def solution(N):
-    cnt = N // 5
-    for i in range(cnt, -1, -1):
-        total = N - (i * 5)
-        if total % 3 == 0:
-            return print(i + (total // 3))
+for i in range(five, -1, -1):
+    three, remaining = divmod((n - (i * 5)), 3)
 
-    return print(-1)
-
-solution(N)
+    if remaining == 0:
+        print(three + i)
+        break
+else:
+    print(-1)

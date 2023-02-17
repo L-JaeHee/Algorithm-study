@@ -1,40 +1,75 @@
-/*
-  10828: 스택/실버 4
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
-
+const fs = require("fs");
+const localPath = __dirname + "/input.txt"; // 로컬 실행용 경로
+const baekPath = "/dev/stdin"; // 백준 제출용 경로
+let input = fs.readFileSync(localPath).toString().trim().split("\n");
 input.shift();
-input = input.map((x) => x.split(' '));
-const stack = [];
+input = input.map((value) => value.split(" "));
 const result = [];
 
-for (const command of input) {
-  if (command[0] === 'push') {
-    stack.push(command[1]);
-  } else if (command[0] === 'pop') {
-    if (stack.length === 0) {
-      result.push(-1);
-    } else {
-      result.push(stack.pop());
+class Stack {
+  constructor() {
+    this.current = [];
+  }
+
+  push(value) {
+    return this.current.push(value);
+  }
+
+  pop() {
+    if (this.empty() === 1) {
+      return -1;
     }
-  } else if (command[0] === 'size') {
-    result.push(stack.length);
-  } else if (command[0] === 'empty') {
-    if (stack.length === 0) {
-      result.push(1);
-    } else {
-      result.push(0);
+
+    return this.current.pop();
+  }
+
+  size() {
+    return this.current.length;
+  }
+
+  empty() {
+    if (this.current.length === 0) {
+      return 1;
     }
-  } else if (command[0] === 'top') {
-    if (stack.length === 0) {
-      result.push(-1);
-    } else {
-      result.push(stack[stack.length - 1]);
+
+    return 0;
+  }
+
+  top() {
+    const currentLength = this.current.length;
+
+    if (currentLength === 0) {
+      return -1;
     }
+
+    return this.current[currentLength - 1];
   }
 }
 
-console.log(result.join('\n'));
+const testStack = new Stack();
+
+for (let command of input) {
+  switch (command[0]) {
+    case "push":
+      testStack.push(command[1]);
+      break;
+
+    case "pop":
+      result.push(testStack.pop());
+      break;
+
+    case "size":
+      result.push(testStack.size());
+      break;
+
+    case "empty":
+      result.push(testStack.empty());
+      break;
+
+    case "top":
+      result.push(testStack.top());
+      break;
+  }
+}
+
+console.log(result.join("\n"));

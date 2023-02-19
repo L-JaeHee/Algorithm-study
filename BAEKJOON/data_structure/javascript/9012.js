@@ -1,33 +1,38 @@
-/*
-  9012: 괄호/실버 4
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
+input = input.split("\n");
 input.shift();
-const result = [];
 
-for (const value of input) {
-  let currentStatus = 0;
-  const temp = value.split('');
-  for (let i = 0; i < temp.length; i++) {
-    if (temp[i] === '(') {
-      currentStatus++;
-    } else if (temp[i] === ')') {
-      currentStatus--;
-    }
-    if (currentStatus < 0) {
-      break;
+function checker(ps) {
+  const stack = [];
+
+  for (let p of ps) {
+    if (p === "(") {
+      stack.push(p);
+    } else if (stack.length === 0) {
+      return "NO";
+    } else {
+      stack.pop();
     }
   }
-  
-  if (currentStatus === 0) {
-    result.push('YES');
+
+  if (stack.length === 0) {
+    return "YES";
   } else {
-    result.push('NO');
+    return "NO";
   }
 }
 
-console.log(result.join('\n'));
+const result = [];
+for (let ps of input) {
+  result.push(checker(ps));
+}
+
+console.log(result.join("\n"));

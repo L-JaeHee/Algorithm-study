@@ -1,38 +1,39 @@
-/*
-  1874: 스택 수열/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n').map((x) => +x);
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const N = parseInt(input.shift());
-const stack = [];
-let number = 1;
-const result = [];
+input = input.split("\n").map((value) => Number(value));
+const n = input.shift();
 
-for (let value of input) {
-  while (number <= value) {
-    stack.push(number);
-    // console.log(stack);
-    number++;
-    result.push('+');
-  }
-  if (stack.indexOf(value) === -1) {
-    result.push('NO');
-    break;
-  } else {
-    let times = stack.length - stack.indexOf(value);
-    for (let i = 0; i < times; i++) {
-      stack.pop();
-      // console.log(stack);
-      result.push('-');
+function solution(input) {
+  const stack = [];
+  const answer = [];
+  let current = 1;
+  let cursor;
+
+  for (let number of input) {
+    cursor = current;
+
+    for (let i = cursor; i <= number; i++) {
+      stack.push(i);
+      answer.push("+");
+      current++;
+    }
+
+    const popedNumber = stack.pop();
+    if (popedNumber !== number) {
+      return "NO";
+    } else {
+      answer.push("-");
     }
   }
+
+  return answer.join("\n");
 }
 
-if (result.indexOf('NO') === -1) {
-  console.log(result.join('\n'));
-} else {
-  console.log('NO');
-}
+console.log(solution(input));

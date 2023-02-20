@@ -1,22 +1,42 @@
-/*
-  1158: 요세푸스 문제/실버 5
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split(' ').map((x) => parseInt(x));
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const [N, K] = input;
-let circle = [...Array(N)].map((x, idx) => idx + 1);
-const result = [];
-let idx = 0;
+const [n, k] = input.split(" ").map((value) => Number(value));
 
-for (let i = 0; i < N; i++) {
-  idx = idx + K - 1;
-  if (idx >= circle.length) {
-    idx = idx % circle.length;
+// O(n^3) 풀이
+// function solution(n, k) {
+//   const init = [...Array(n).keys()].map((value) => ++value);
+//   const result = [];
+
+//   for (let i = 0; i < n; i++) {
+//     for (let j = 0; j < k; j++) {
+//       init.push(init.shift());
+//     }
+
+//     result.push(init.pop());
+//   }
+
+//   return result.join(", ");
+// }
+
+// O(n^2) 풀이
+function solution(n, k) {
+  const arr = [...Array(n).keys()].map((value) => ++value);
+  const result = [];
+  let index = k - 1;
+
+  while (arr.length > 0) {
+    result.push(...arr.splice(index, 1));
+    index = (index + k - 1) % arr.length;
   }
-  result.push(circle.splice(idx, 1)[0]);
+
+  return result.join(", ");
 }
 
-console.log(`<${result.join(', ')}>`);
+console.log(`<${solution(n, k)}>`);

@@ -1,37 +1,43 @@
-/*
-  1935: 후위 표기식2/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const N = parseInt(input.shift());
-let expression = input.shift();
-const values = {};
+function solution(input) {
+  let [n, exp, ...nums] = input.split("\n");
+  n = Number(n);
+  nums = nums.map((x) => Number(x));
+  const stack = [];
+  const obj = {};
 
-let char = 65;
-for (let i = 0; i < N; i++) {
-  values[String.fromCharCode(char)] = parseInt(input[i]);
-  char++;
-}
-
-const commands = {
-  '*': (x, y) => x * y,
-  '+': (x, y) => x + y,
-  '/': (x, y) => x / y,
-  '-': (x, y) => x - y
-}
-
-const temp = [];
-for (let ex of expression) {
-  if (ex === '*' || ex === '+' || ex === '/' || ex === '-') {
-    let second = temp.pop();
-    let first = temp.pop();
-    temp.push(commands[ex](first, second));
-  } else {
-    temp.push(values[ex]);
+  let alpha = 65;
+  for (let i = 0; i < n; i++) {
+    obj[String.fromCharCode(alpha)] = nums[i];
+    alpha++;
   }
+
+  const command = {
+    "*": (x, y) => x * y,
+    "+": (x, y) => x + y,
+    "-": (x, y) => x - y,
+    "/": (x, y) => x / y,
+  };
+
+  for (let char of exp) {
+    if (["*", "+", "-", "/"].indexOf(char) !== -1) {
+      let second = stack.pop();
+      let first = stack.pop();
+      stack.push(command[char](first, second));
+    } else {
+      stack.push(obj[char]);
+    }
+  }
+
+  return stack[0];
 }
 
-console.log(temp[0].toFixed(2));
+console.log(solution(input).toFixed(2));

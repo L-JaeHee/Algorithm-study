@@ -1,26 +1,29 @@
-/*
-  10799: 쇠막대기/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-input = input.replace(/\(\)/g, '*');
-const stack = [];
-let result = 0;
+function solution(input) {
+  const replacedInput = input.replace(/\(\)/g, "*");
+  let result = 0;
+  let stick = 0;
 
-for (let value of input) {
-  if (value === '*') {
-    result += stack.length;
+  for (let char of replacedInput) {
+    if (char === "(") {
+      stick++;
+      result++;
+    } else if (char === ")") {
+      stick--;
+    } else if (char === "*") {
+      result += stick;
+    }
   }
-  if (value === '(') {
-    stack.push(value);
-  }
-  if (value === ')') {
-    stack.pop();
-    result++;
-  }
+
+  return result;
 }
 
-console.log(result);
+console.log(solution(input));

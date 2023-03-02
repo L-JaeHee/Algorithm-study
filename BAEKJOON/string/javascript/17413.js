@@ -1,20 +1,58 @@
-/*
-  17413: 단어 뒤집기2/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const re = /(<.+?>|\s)/;
-let result = '';
-input = input.split(re);
-for (let word of input) {
-  if (re.test(word)) {
-    result += word;
-  } else {
-    result += word.split('').reverse().join('');
+// 정규식 풀이
+// function solution(input) {
+//   const re = /(<.+?>|\s)/;
+//   let result = "";
+
+//   for (let word of input.split(re)) {
+//     if (re.test(word)) {
+//       result += word;
+//     } else {
+//       result += word.split("").reverse().join("");
+//     }
+//   }
+
+//   return result;
+// }
+
+// 일반 풀이
+function solution(input) {
+  const result = [];
+  const stack = [];
+  let toReverse = true;
+
+  for (let char of input) {
+    if (char === " " && toReverse) {
+      result.push(stack.reverse().join(""));
+      stack.length = 0;
+      result.push(char);
+      continue;
+    } else if (char === "<") {
+      result.push(stack.reverse().join(""));
+      stack.length = 0;
+      toReverse = false;
+    } else if (char === ">") {
+      stack.push(char);
+      result.push(stack.join(""));
+      stack.length = 0;
+      toReverse = true;
+      continue;
+    }
+
+    stack.push(char);
   }
+
+  result.push(stack.reverse().join(""));
+
+  return result.join("");
 }
 
-console.log(result);
+console.log(solution(input));

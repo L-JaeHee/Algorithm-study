@@ -1,20 +1,27 @@
-/*
-  17298: 오큰수/골드 4
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const sequence = input[1].split(' ').map((x) => +x);
-const result = new Array(parseInt(input[0])).fill(-1);
-const stack = [];
+function solution(input) {
+  let [n, nums] = input.split("\n");
+  nums = nums.split(" ").map((x) => Number(x));
+  const stack = [];
+  const result = Array(Number(n)).fill(-1);
 
-sequence.forEach((value, idx) => {
-  while (stack.length && sequence[stack[stack.length - 1]] < value) {
-    result[stack.pop()] = value;
+  for (let i = 0; i < n; i++) {
+    while (stack.length > 0 && nums[stack[stack.length - 1]] < nums[i]) {
+      result[stack.pop()] = nums[i];
+    }
+
+    stack.push(i);
   }
-  stack.push(idx);
-})
 
-console.log(result.join(' '));
+  return result.join(" ");
+}
+
+console.log(solution(input));

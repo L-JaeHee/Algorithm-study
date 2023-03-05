@@ -1,30 +1,31 @@
-/*
-  1978: 소수찾기/실버 4
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const N = +input[0];
-const nums = input[1].split(' ').map((x) => +x);
-let result = 0;
+function solution(input) {
+  const [n, nums] = input.split("\n");
+  let result = 0;
 
-function primeNumber(num) {
-  if (num === 1) {
-    return 0;
-  }
+  for (let num of nums.split(" ").map((x) => Number(x))) {
+    if (num === 1) continue;
+    let isPrime = true;
 
-  for (let i = 2; i < Math.sqrt(num) + 1; i++) {
-    if (num % i === 0) {
-      return 0;
+    for (let i = 2; i < Math.floor(Math.sqrt(num)) + 1; i++) {
+      if (num % i === 0) {
+        isPrime = false;
+        break;
+      }
     }
+
+    if (isPrime) result++;
   }
-  return result += 1;
+
+  return result;
 }
 
-for (const num of nums) {
-  primeNumber(num);
-}
-
-console.log(result);
+console.log(solution(input));

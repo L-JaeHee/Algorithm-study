@@ -1,17 +1,20 @@
-/*
- 11654: 아스키 코드/브론즈 5
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().split(' ');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-input = input[0];
-/* input =  [ 'baekjoon' ] */
-let result = [];
+function solution(input) {
+  const result = Array(26).fill(-1);
 
-for (let i = 97; i <= 122; i++) {
-  result.push(input.indexOf(String.fromCharCode(i)));
+  for (let char of input) {
+    result[char.charCodeAt() % 97] = input.indexOf(char);
+  }
+
+  return result.join(" ");
 }
 
-console.log(result.join(" "));
+console.log(solution(input));

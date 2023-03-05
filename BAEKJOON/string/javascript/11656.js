@@ -1,15 +1,18 @@
-/*
-  11656: 접미사 배열/실버 4
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const arr = [];
-while (input.length >= 1) {
-  arr.push(input.join(''));
-  input.shift();
+function solution(input) {
+  return input
+    .split("")
+    .map((x, idx) => input.slice(idx))
+    .sort()
+    .join("\n");
 }
-arr.sort();
-console.log(arr.join('\n'));
+
+console.log(solution(input));

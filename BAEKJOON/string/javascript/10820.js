@@ -1,24 +1,22 @@
-/*
-  10820: 문자열 분석/브론즈 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().split('\n');
+const fs = require("fs");
+let input = process.platform === "linux" ? fs.readFileSync("/dev/stdin").toString() : fs.readFileSync(__dirname + "/input.txt").toString();
 
-for (let string of input) {
-  if (string === '') continue;
-  const temp = [0, 0, 0, 0];
-  for (let word of string) {
-    if (word >= 'a' && word <= 'z') {
-      temp[0]++;
-    } else if (word >= 'A' && word <= 'Z') {
-      temp[1]++;
-    } else if (word >= '0' && word <= '9') {
-      temp[2]++;
-    } else if (word === ' ') {
-      temp[3]++;
-    }
+function solution(input) {
+  input = input.split("\n");
+  input.pop();
+  const result = [];
+
+  for (let str of input) {
+    const nums = [0, 0, 0, 0];
+    nums[0] = str.match(/[a-z]/g)?.length ?? 0;
+    nums[1] = str.match(/[A-Z]/g)?.length ?? 0;
+    nums[2] = str.match(/[0-9]/g)?.length ?? 0;
+    nums[3] = str.match(/ /g)?.length ?? 0;
+
+    result.push(nums.join(" "));
   }
-  console.log(temp.join(' '));
+
+  return result.join("\n");
 }
+
+console.log(solution(input));

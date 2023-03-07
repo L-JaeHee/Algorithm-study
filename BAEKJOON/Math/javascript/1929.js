@@ -1,30 +1,30 @@
-/*
-  1929: 소수 구하기/실버 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().split(' ');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const min = +input[0];
-const max = +input[1];
+function solution(input) {
+  const result = [];
+  const [M, N] = input.split(" ").map((x) => Number(x));
+  const primes = Array(N + 1).fill(true);
 
-const primes = Array(max + 1).fill(true);
-primes[1] = false;
-
-for (let i = 2; i <= Math.ceil(Math.sqrt(max)); i++) {
-  let m = 2;
-  while (i * m <= max) {
-    primes[i * m] = false;
-    m++;
+  for (let i = 2; i < Math.floor(Math.sqrt(N)) + 1; i++) {
+    let j = 2;
+    while (i * j <= N) {
+      primes[i * j] = false;
+      j++;
+    }
   }
+
+  for (let i = M; i <= N; i++) {
+    if (primes[i] && i > 1) result.push(i);
+  }
+
+  return result.join("\n");
 }
 
-const result = [];
-for (let i = min; i <= max; i++) {
-  if (primes[i]) {
-    result.push(i);
-  }
-}
-
-console.log(result.join(' '));
+console.log(solution(input));

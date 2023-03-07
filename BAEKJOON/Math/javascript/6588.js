@@ -1,53 +1,43 @@
-/*
-  6588: 골드바흐의 추측/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
-input.pop();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const MAX = 1000000;
+function solution(input) {
+  const result = [];
+  const max = 1000000;
+  const primes = Array(max + 1).fill(true);
+  const nums = input.split("\n").map((x) => Number(x));
+  nums.pop();
 
-let primes = new Array(MAX + 1).fill(true);
-primes[0] = false;
-primes[1] = false;
-
-for (let i = 2; i < Math.ceil(Math.sqrt(primes.length)); i++) {
-  let m = 2;
-  while (i * m <= MAX) {
-    primes[i * m] = false;
-    m++;
-  }
-}
-
-primes = primes.map((x, idx) => {
-  if (x) return idx;
-})
-primes = primes.filter((x) => {
-  if (x) return true;
-})
-primes = new Set(primes);
-
-function checker(number) {
-  for (let i = 2; i < number / 2 + 1; i++) {
-    let temp = number - i;
-    if (primes.has(temp) && primes.has(i)) {
-      return [i, temp];
+  for (let i = 2; i < Math.floor(Math.sqrt(max)) + 1; i++) {
+    let j = 2;
+    while (i * j <= max) {
+      primes[i * j] = false;
+      j++;
     }
   }
-  return -1
-}
 
-const result = [];
+  for (let num of nums) {
+    let flag = true;
+    for (let i = 2; i < num / 2 + 1; i++) {
+      if (primes[i] && primes[num - i]) {
+        result.push(`${num} = ${i} + ${num - i}`);
+        flag = false;
+        break;
+      }
+    }
 
-for (let value of input) {
-  let ans = checker(value);
-  if (ans === -1) {
-    result.push('Goldbach\'s conjecture is wrong.');
-  } else {
-    result.push(`${value} = ${ans[0]} + ${ans[1]}`);
+    if (flag) {
+      result.push(`Goldbach\'s conjecture is wrong`);
+    }
   }
+
+  return result.join("\n");
 }
 
-console.log(result.join('\n'));
+console.log(solution(input));

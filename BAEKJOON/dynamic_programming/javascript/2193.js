@@ -1,18 +1,20 @@
-/*
-  2193: 이친수/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = +fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [-1, [0, 1], [1, 0]];
+function solution(input) {
+  const dp = [-1, [0, 1]];
 
-for (let i = 3; i <= input; i++) {
-  let temp = new Array(2).fill(0);
-  temp[0] = BigInt(dp[i - 1][0] + dp[i - 1][1]);
-  temp[1] = BigInt(dp[i - 1][0]);
-  dp.push(temp);
+  for (let i = 2; i <= Number(input); i++) {
+    dp[i] = [BigInt(dp[i - 1][0] + dp[i - 1][1]), BigInt(dp[i - 1][0])];
+  }
+
+  return String(dp[input].reduce((sum, cur) => sum + cur));
 }
 
-console.log(String(BigInt(dp[input].reduce((sum, x) => sum + x))));
+console.log(solution(input));

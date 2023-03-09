@@ -1,15 +1,23 @@
-/*
-  11726: 2 x n 타일링/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim();
-input = Number(input);
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [-1, 1, 2];
-for (let i = 3; i <= input; i++) {
-  dp.push((dp[i - 2] + dp[i - 1]) % 10007);
+function solution(input) {
+  const n = Number(input);
+  const dp = new Array(n + 1).fill(0);
+  dp[1] = 1;
+  dp[2] = 2;
+
+  for (let i = 3; i <= n; i++) {
+    dp[i] = (dp[i - 2] + dp[i - 1]) % 10007;
+  }
+
+  return dp[n];
 }
 
-console.log(dp[input]);
+console.log(solution(input));

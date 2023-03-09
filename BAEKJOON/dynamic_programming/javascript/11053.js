@@ -1,24 +1,32 @@
-/*
-  11053: 가장 긴 증가하는 부분수열/실버 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
-const N = input.shift();
-input = input[0].split(' ').map(Number);
-input.unshift(0);
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [0];
-let temp;
-for (let i = 1; i < input.length; i++) {
-  temp = [];
-  for (let j = 0; j < i; j++) {
-    if (input[i] > input[j] ) {
-      temp.push(dp[j] + 1);
+function solution(input) {
+  let [n, nums] = input.split("\n");
+  nums = nums.split(" ").map((x) => Number(x));
+  nums.unshift(-1);
+  const dp = new Array(Number(n) + 1).fill(0);
+  dp[1] = 1;
+
+  for (let i = 2; i <= n; i++) {
+    const arr = [1];
+
+    for (let j = 1; j < i; j++) {
+      if (nums[i] > nums[j]) {
+        arr.push(dp[j] + 1);
+      }
     }
+
+    dp[i] = Math.max(...arr);
   }
-  dp.push(Math.max(...temp));
+
+  return Math.max(...dp);
 }
 
-console.log(Math.max(...dp));
+console.log(solution(input));

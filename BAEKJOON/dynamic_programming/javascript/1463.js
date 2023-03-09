@@ -1,22 +1,35 @@
-/*
-  1463: 1로 만들기/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim();
-input = Number(input);
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = new Array(input + 1).fill(0);
+function solution(input) {
+  const N = Number(input);
+  const dp = Array(N + 1).fill(0);
 
-for (let i = 2; i <= input; i++) {
-  dp[i] = dp[i - 1] + 1;
-  if (i % 3 === 0) {
-    dp[i] = Math.min(dp[i], dp[i / 3] + 1);
+  if (N === 1) {
+    return 0;
   }
-  if (i % 2 === 0) {
-    dp[i] = Math.min(dp[i], dp[i / 2] + 1);
+
+  for (let i = 2; i <= N; i++) {
+    const values = [];
+
+    if (i % 3 === 0) {
+      values.push(1 + dp[i / 3]);
+    }
+    if (i % 2 === 0) {
+      values.push(1 + dp[i / 2]);
+    }
+    values.push(1 + dp[i - 1]);
+
+    dp[i] = Math.min(...values);
   }
+
+  return dp[N];
 }
 
-console.log(dp[input]);
+console.log(solution(input));

@@ -1,25 +1,32 @@
-/*
-  16194: 카드 구매하기 2/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const N = Number(input.shift());
-input = input[0].split(' ').map((x) => +x);
+function solution(input) {
+  let [n, pis] = input.split("\n");
+  pis = pis.split(" ").map((x) => Number(x));
+  pis.unshift(-1);
 
-const dp = [0, ...input];
-let min;
+  const dp = new Array(Number(n) + 1).fill(0);
+  dp[1] = pis[1];
 
-for (let i = 1; i <= N; i++) {
-  min = dp[i];
-  for (let j = i; j > 0; j--) {
-    if (min > dp[i - j] + dp[j]) {
-      min = dp[i - j] + dp[j];
+  for (let i = 2; i <= Number(n); i++) {
+    const values = [];
+    if (pis[i]) values.push(pis[i]);
+
+    for (let j = i - 1; j > 0; j--) {
+      values.push(dp[j] + pis[i - j]);
     }
+
+    dp[i] = Math.min(...values);
   }
-  dp[i] = min;
+
+  return dp[n];
 }
 
-console.log(dp[N]);
+console.log(solution(input));

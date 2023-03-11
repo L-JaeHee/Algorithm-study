@@ -1,18 +1,23 @@
-/*
-  1912: 연속합/실버 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
-const N = +input.shift();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-input = input[0].split(' ').map(Number);
-const dp = new Array(N - 1).fill(0);
-dp.unshift(input[0]);
+function solution(input) {
+  let [n, nums] = input.split("\n");
+  nums = nums.split(" ").map((x) => Number(x));
+  const dp = new Array(n - 1).fill(0);
+  dp.unshift(nums[0]);
 
-for (let i = 1; i < input.length; i++) {
-  dp[i] = Math.max(dp[i - 1] + input[i], input[i]);
+  for (let i = 1; i < n; i++) {
+    dp[i] = Math.max(nums[i], dp[i - 1] + nums[i]);
+  }
+
+  return Math.max(...dp);
 }
 
-console.log(Math.max(...dp));
+console.log(solution(input));

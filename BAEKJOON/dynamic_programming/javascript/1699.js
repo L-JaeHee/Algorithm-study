@@ -1,20 +1,27 @@
-/*
-  1699: 제곱수의 합/실버 3
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = +fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [0];
-let temp;
+function solution(input) {
+  const dp = new Array(Number(input) + 1).fill(0);
+  dp[1] = 1;
 
-for (let i = 1; i <= input; i++) {
-  temp = [];
-  for (let j = 1; j <= Math.sqrt(i); j++) {
-    temp.push(dp[i - j**2]);
+  for (let i = 1; i <= input; i++) {
+    const arr = [];
+
+    for (let j = 1; j ** 2 <= i; j++) {
+      arr.push(1 + dp[i - j ** 2]);
+    }
+
+    dp[i] = Math.min(...arr);
   }
-  dp.push(Math.min(...temp) + 1);
+
+  return dp[input];
 }
 
-console.log(dp[input]);
+console.log(solution(input));

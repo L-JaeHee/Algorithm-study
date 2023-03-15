@@ -1,20 +1,30 @@
-/*
-  15988: 1, 2, 3 더하기 3/실버 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n').map(Number);
-input.shift();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [0, 1, 2, 4];
-for (let i = 4; i <= Math.max(...input); i++) {
-  dp.push((dp[i - 3] + dp[i - 2] + dp[i - 1]) % 1000000009);
+function solution(input) {
+  const [n, ...nums] = input.split("\n").map((x) => Number(x));
+  const result = [];
+  const max = Math.max(...nums);
+  const dp = new Array(max + 1).fill(0);
+  dp[1] = 1;
+  dp[2] = 2;
+  dp[3] = 4;
+
+  for (let i = 4; i <= max; i++) {
+    dp[i] = (((dp[i - 1] + dp[i - 2]) % 1000000009) + dp[i - 3]) % 1000000009;
+  }
+
+  for (let num of nums) {
+    result.push(dp[num]);
+  }
+
+  return result.join("\n");
 }
 
-const result = [];
-for (let value of input) {
-  result.push(dp[value]);
-}
-
-console.log(result.join('\n'));
+console.log(solution(input));

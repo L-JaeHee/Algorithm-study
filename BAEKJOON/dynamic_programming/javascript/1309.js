@@ -1,15 +1,22 @@
-/*
-  1309: 동물원/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = +fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [0, 3, 7];
+function solution(input) {
+  const dp = new Array(Number(input) + 1).fill(0);
+  dp[1] = 3;
+  dp[2] = 7;
 
-for (let i = 3; i <= input; i++) {
-  dp.push((dp[i - 2] + dp[i - 1] * 2) % 9901);
+  for (let i = 3; i <= input; i++) {
+    dp[i] = (dp[i - 1] * 2 + dp[i - 2]) % 9901;
+  }
+
+  return dp[input];
 }
 
-console.log(dp[input]);
+console.log(solution(input));

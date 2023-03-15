@@ -1,22 +1,26 @@
-/*
-  1149: RGB거리/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const N = +input.shift();
-input = input.map((x) => x.split(' ').map(Number));
-const dp = [input[0]];
+function solution(input) {
+  let [n, ...rgbs] = input.split("\n");
+  rgbs = rgbs.map((x) => x.split(" ").map((x) => Number(x)));
+  rgbs.unshift(-1);
+  const dp = new Array(Number(n) + 1).fill(0).map(() => new Array(3).fill(0));
+  dp[1] = rgbs[1];
 
-let temp;
-for (let i = 1; i < N; i++) {
-  temp = [0, 0, 0];
-  temp[0] = Math.min(dp[i - 1][1], dp[i - 1][2]) + input[i][0];
-  temp[1] = Math.min(dp[i - 1][0], dp[i - 1][2]) + input[i][1];
-  temp[2] = Math.min(dp[i - 1][0], dp[i - 1][1]) + input[i][2];
-  dp.push(temp);
+  for (let i = 2; i <= n; i++) {
+    dp[i][0] = Math.min(dp[i - 1][1], dp[i - 1][2]) + rgbs[i][0];
+    dp[i][1] = Math.min(dp[i - 1][0], dp[i - 1][2]) + rgbs[i][1];
+    dp[i][2] = Math.min(dp[i - 1][0], dp[i - 1][1]) + rgbs[i][2];
+  }
+
+  return Math.min(...dp[n]);
 }
 
-console.log(Math.min(...dp[N - 1]));
+console.log(solution(input));

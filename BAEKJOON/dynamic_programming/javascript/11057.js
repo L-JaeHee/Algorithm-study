@@ -1,20 +1,23 @@
-/*
-  11057: 오르막 수/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = +fs.readFileSync(localPath).toString().trim();
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const dp = [-1, new Array(10).fill(1)];
-let temp;
+function solution(input) {
+  const dp = new Array(Number(input) + 1).fill(0).map(() => new Array(10).fill(0));
+  dp[1] = new Array(10).fill(1);
 
-for (let i = 2; i <= input; i++) {
-  temp = [];
-  for (let j = 0; j < 10; j++) {
-    temp.push((dp[i - 1].slice(j,).reduce((sum, x) => sum + x)) % 10007);
+  for (let i = 2; i <= input; i++) {
+    for (let j = 0; j < 10; j++) {
+      dp[i][j] = dp[i - 1].slice(j).reduce((acc, cur) => acc + cur) % 10007;
+    }
   }
-  dp.push(temp);
+
+  return dp[input].reduce((acc, cur) => acc + cur) % 10007;
 }
 
-console.log((dp[input].reduce((sum, x) => sum + x)) % 10007);
+console.log(solution(input));

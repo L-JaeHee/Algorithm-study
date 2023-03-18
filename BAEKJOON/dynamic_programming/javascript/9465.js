@@ -1,33 +1,32 @@
-/*
-  9465: 스티커/실버 1
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const T = +input.shift();
-let N;
-let testCase;
-let dp;
-let temp;
+function solution(input) {
+  input = input.split("\n");
+  const t = Number(input.shift());
+  const result = [];
 
-for (let t = 0; t < T; t++) {
-  testCase = [];
+  for (let i = 0; i < input.length; i += 3) {
+    const n = Number(input[i]);
+    const nums0 = input[i + 1].split(" ").map((x) => Number(x));
+    const nums1 = input[i + 2].split(" ").map((x) => Number(x));
+    const dp = new Array(n + 2).fill(0).map(() => new Array(2).fill(0));
 
-  for (let i = 0; i < 3; i++) {
-    testCase.push(input.shift());
+    for (j = 0; j < n; j++) {
+      dp[j + 2][0] = Math.max(dp[j + 1][1] + nums0[j], dp[j][1] + nums0[j]);
+      dp[j + 2][1] = Math.max(dp[j + 1][0] + nums1[j], dp[j][0] + nums1[j]);
+    }
+
+    result.push(Math.max(...dp[dp.length - 1]));
   }
 
-  N = testCase.shift();
-  testCase = [testCase[0].split(' ').map(Number), testCase[1].split(' ').map(Number)];
-  testCase[0].unshift(0);
-  testCase[1].unshift(0);
-  dp = [new Array(3).fill(0)];
-
-  for (let i = 1; i <= N; i++) {
-    dp.push([Math.max(...dp[i - 1]), Math.max(dp[i - 1][2] + testCase[0][i], dp[i - 1][0] + testCase[0][i]), Math.max(dp[i - 1][0] + testCase[1][i], dp[i - 1][1] + testCase[1][i])]);
-  }
-
-  console.log(Math.max(...dp[dp.length - 1]));
+  return result.join("\n");
 }
+
+console.log(solution(input));

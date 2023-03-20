@@ -1,26 +1,32 @@
-/*
-  2309: 일곱 난쟁이/브론즈 2
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n').map(Number);
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-let result = [...input];
-const diff = input.reduce((sum, x) => sum + x) - 100;
-let status = 0;
+function solution(input) {
+  const nums = input
+    .split("\n")
+    .map(Number)
+    .sort((a, b) => a - b);
 
-for (let i = 0; i < result.length - 1; i++) {
-  if (status === 1) break;
+  let sum = nums.reduce((sum, cur) => sum + cur);
 
-  for (let j = i + 1; j < result.length; j++) {
-    if (result[i] + result[j] === diff) {
-      result.splice(i, 1);
-      result.splice(j - 1, 1);
-      status++;
-      break;
+  for (let i = 0; i < 8; i++) {
+    for (let j = i + 1; j < 9; j++) {
+      if (sum - nums[i] - nums[j] === 100) {
+        return nums
+          .filter((_, idx) => {
+            if (idx === i || idx === j) return false;
+            else return true;
+          })
+          .join("\n");
+      }
     }
   }
 }
 
-console.log(result.sort((a, b) => a - b).join('\n'));
+console.log(solution(input));

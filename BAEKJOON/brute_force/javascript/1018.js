@@ -1,47 +1,55 @@
-/*
-  1018: 체스판 다시 칠하기/실버 5
-*/
-const fs = require('fs');
-const localPath = __dirname + '/input.txt';  // 로컬 실행용 경로
-const baekPath = '/dev/stdin';  // 백준 제출용 경로
-let input = fs.readFileSync(localPath).toString().trim().split('\n');
+const fs = require("fs");
+let input =
+  process.platform === "linux"
+    ? fs.readFileSync("/dev/stdin").toString().trim()
+    : fs
+        .readFileSync(__dirname + "/input.txt")
+        .toString()
+        .trim();
 
-const [N, M] = input.shift().split(' ').map((x) => +x);
-const result = [];
+function checkBoard(board) {
+  const correctBoard = ["WBWBWBWB", "BWBWBWBW"];
+  let result1 = 0;
+  let result2 = 0;
 
-for (let i = 0; i < N - 7; i++) {
-  for (let j = 0; j < M - 7; j++) {
-    const board = [];
-    board.push(input[i].slice(j, j + 8));
-    board.push(input[i + 1].slice(j, j + 8));
-    board.push(input[i + 2].slice(j, j + 8));
-    board.push(input[i + 3].slice(j, j + 8));
-    board.push(input[i + 4].slice(j, j + 8));
-    board.push(input[i + 5].slice(j, j + 8));
-    board.push(input[i + 6].slice(j, j + 8));
-    board.push(input[i + 7].slice(j, j + 8));
-    result.push(checker(board));
-  }
-}
-
-console.log(Math.min(...result));
-
-function checker(board) {
-  const total = [];
-  const colors = ['W', 'B'];
-  for (let color of colors) {
-    let currentColor = color;
-    let cnt = 0;
-    for (let i = 0; i < 8; i++) {
-      for (let j = 0; j < 8; j++) {
-        if (board[i][j] !== currentColor) {
-          cnt++;
-        }
-        currentColor = currentColor === 'W' ? 'B' : 'W';
-      }
-      currentColor = currentColor === 'W' ? 'B' : 'W';
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if (board[i][j] !== correctBoard[i % 2][j]) result1++;
     }
-    total.push(cnt);
   }
-  return Math.min(...total);
+
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if (board[i][j] !== correctBoard[(i + 1) % 2][j]) result2++;
+    }
+  }
+
+  return Math.min(result1, result2);
 }
+
+function solution(input) {
+  const [NM, ...board] = input.split("\n");
+  const [N, M] = NM.split(" ").map(Number);
+  const result = [];
+
+  for (let i = 0; i + 8 <= N; i++) {
+    for (let j = 0; j + 8 <= M; j++) {
+      const slicedBoard = [
+        board[i].slice(j, j + 8),
+        board[i + 1].slice(j, j + 8),
+        board[i + 2].slice(j, j + 8),
+        board[i + 3].slice(j, j + 8),
+        board[i + 4].slice(j, j + 8),
+        board[i + 5].slice(j, j + 8),
+        board[i + 6].slice(j, j + 8),
+        board[i + 7].slice(j, j + 8),
+      ];
+
+      result.push(checkBoard(slicedBoard));
+    }
+  }
+
+  return Math.min(...result);
+}
+
+console.log(solution(input));

@@ -1,45 +1,43 @@
 const fs = require("fs");
-let input =
-  process.platform === "linux"
-    ? fs.readFileSync("/dev/stdin").toString().trim()
-    : fs
-        .readFileSync(__dirname + "/input.txt")
-        .toString()
-        .trim()
-        .split("\n");
+const filePath = process.platform === "linux" ? "/dev/stdin" : __dirname + "/input.txt";
+let input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-class Node {
-  constructor(value, index) {
-    this.value = value;
-    this.index = index;
-  }
-}
+/*
+코드 가독성 개선
+compareFunction을 이용해 하나의 Heap 클래스로 최소힙, 최대힙 구현
+요소를 각각 노드 클래스를 만들어 객체로 삽입했던 부분을 정수로 사용하도록 개선
 
-class MinHeap {
-  constructor() {
+아직 메모리초과 문제 존재
+*/
+
+class Heap {
+  constructor(compareFunction) {
     this.items = [null];
-    this.size = 0;
+    this.compareFunction = compareFunction;
+  }
+
+  size() {
+    return this.items.length - 1;
   }
 
   swap(index1, index2) {
     [this.items[index1], this.items[index2]] = [this.items[index2], this.items[index1]];
   }
 
-  peek() {
+  top() {
     return this.items[1];
   }
 
-  insert(node) {
-    this.size++;
-    this.items.push(node);
+  insert(num) {
+    this.items.push(num);
 
-    let currentIndex = this.size;
+    let currentIndex = this.size();
     while (currentIndex > 1) {
       const parrentIndex = Math.floor(currentIndex / 2);
-      const current = this.items[currentIndex].value;
-      const parent = this.items[parrentIndex].value;
+      const current = this.items[currentIndex];
+      const parent = this.items[parrentIndex];
 
-      if (current < parent) {
+      if (this.compareFunction(current, parent)) {
         this.swap(currentIndex, parrentIndex);
         currentIndex = parrentIndex;
       } else {
@@ -48,33 +46,25 @@ class MinHeap {
     }
   }
 
-  remove() {
-    if (this.size === 0) {
-      return null;
-    } else if (this.size === 1) {
-      this.size--;
+  pop() {
+    const size = this.size();
+    if (size === 1) {
       return this.items.pop();
-    } else {
-      this.swap(1, this.size);
-      this.size--;
+    } else if (size > 1) {
+      this.swap(1, size);
       const result = this.items.pop();
 
       let currentIndex = 1;
-      while (true) {
-        const leftIndex = currentIndex * 2;
-        const rightIndex = currentIndex * 2 + 1;
-        const current = this.items[currentIndex].value;
-        const left = this.items[leftIndex]?.value ?? Number.MAX_SAFE_INTEGER;
-        const right = this.items[rightIndex]?.value ?? Number.MAX_SAFE_INTEGER;
+      while (currentIndex <= Math.floor((size - 1) / 2)) {
+        const [leftIndex, rightIndex] = [currentIndex * 2, currentIndex * 2 + 1];
+        const [left, right, current] = [this.items[leftIndex], this.items[rightIndex], this.items[currentIndex]];
+        const targetChild = this.compareFunction(right, left) ? rightIndex : leftIndex;
 
-        if (current < left && current < right) {
+        if (this.compareFunction(current, this.items[targetChild])) {
           break;
-        } else if (left < right) {
-          this.swap(currentIndex, leftIndex);
-          currentIndex = leftIndex;
-        } else if (right < left) {
-          this.swap(currentIndex, rightIndex);
-          currentIndex = rightIndex;
+        } else {
+          this.swap(currentIndex, targetChild);
+          currentIndex = targetChild;
         }
       }
 
@@ -89,53 +79,61 @@ const t = +input[cursor++];
 
 for (let i = 0; i < t; i++) {
   const k = +input[cursor++];
-
-  const minHeap = new MinHeap();
-  const maxHeap = new MinHeap();
-  const checkList = [];
-  let index = 0;
+  const minHeap = new Heap((a, b) => a < b);
+  const maxHeap = new Heap((a, b) => a > b);
+  const minCheckMap = new Map();
+  const maxCheckMap = new Map();
 
   for (let j = 0; j < k; j++) {
-    const [order, num] = input[cursor++].split(" ").map((x) => (Number.isInteger(parseInt(x)) ? Number(x) : x));
+    let [order, n] = input[cursor++].split(" ");
+    const num = Number(n);
 
     if (order === "I") {
-      minHeap.insert(new Node(num, index));
-      maxHeap.insert(new Node(num === 0 ? 0 : -num, index));
-      checkList[index] = false;
-      index++;
+      minHeap.insert(num);
+      maxHeap.insert(num);
+
+      if (!minCheckMap.has(num)) {
+        minCheckMap.set(num, 0);
+        maxCheckMap.set(num, 0);
+      }
     } else if (num === 1) {
-      while (checkList[maxHeap.peek()?.index] === true) {
-        maxHeap.remove();
+      while (maxCheckMap.get(maxHeap.top()) > 0) {
+        const removedNum = maxHeap.pop();
+        maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) - 1);
       }
 
-      if (Number.isInteger(maxHeap.peek()?.index)) {
-        checkList[maxHeap.remove().index] = true;
+      const removedNum = maxHeap.pop();
+      if (removedNum) {
+        minCheckMap.set(removedNum, minCheckMap.get(removedNum) + 1);
       }
     } else if (num === -1) {
-      while (checkList[minHeap.peek()?.index] === true) {
-        minHeap.remove();
+      while (minCheckMap.get(minHeap.top()) > 0) {
+        const removedNum = minHeap.pop();
+        minCheckMap.set(removedNum, minCheckMap.get(removedNum) - 1);
       }
 
-      if (Number.isInteger(minHeap.peek()?.index)) {
-        checkList[minHeap.remove().index] = true;
+      const removedNum = minHeap.pop();
+      if (removedNum) {
+        maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) + 1);
       }
     }
   }
 
-  while (checkList[maxHeap.peek()?.index] === true) {
-    maxHeap.remove();
+  while (maxCheckMap.get(maxHeap.top()) > 0) {
+    const removedNum = maxHeap.pop();
+    maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) - 1);
   }
 
-  while (checkList[minHeap.peek()?.index] === true) {
-    minHeap.remove();
+  while (minCheckMap.get(minHeap.top()) > 0) {
+    const removedNum = minHeap.pop();
+    minCheckMap.set(removedNum, minCheckMap.get(removedNum) - 1);
   }
 
-  if (minHeap.size === 0 && maxHeap.size === 0) {
+  if (minHeap.size() === 0 && maxHeap.size() === 0) {
     result.push("EMPTY");
   } else {
-    result.push(maxHeap.peek().value === 0 ? 0 : -maxHeap.peek().value + " " + minHeap.peek().value);
+    result.push(`${maxHeap.top()} ${minHeap.top()}`);
   }
 }
-
 
 console.log(result.join("\n"));

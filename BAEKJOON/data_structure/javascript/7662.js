@@ -7,7 +7,10 @@ let input = fs.readFileSync(filePath).toString().trim().split("\n");
 compareFunction을 이용해 하나의 Heap 클래스로 최소힙, 최대힙 구현
 요소를 각각 노드 클래스를 만들어 객체로 삽입했던 부분을 정수로 사용하도록 개선
 
-아직 메모리초과 문제 존재
+아직 메모리초과 문제 존재 -> 해결
+해결 방법: 동기화를 위해 각각의 경우에 사용한 minCheckHeap, maxCheckHeap을 checkMap으로 하나로 줄이고
+maxHeap에서 삭제시 +1, minHeap에서 삭제시 -1
+로직을 도입하여 최소한의 메모리를 사용할 수 있도록 개선
 */
 
 class Heap {
@@ -81,8 +84,7 @@ for (let i = 0; i < t; i++) {
   const k = +input[cursor++];
   const minHeap = new Heap((a, b) => a < b);
   const maxHeap = new Heap((a, b) => a > b);
-  const minCheckMap = new Map();
-  const maxCheckMap = new Map();
+  const checkMap = new Map();
 
   for (let j = 0; j < k; j++) {
     let [order, n] = input[cursor++].split(" ");
@@ -92,41 +94,40 @@ for (let i = 0; i < t; i++) {
       minHeap.insert(num);
       maxHeap.insert(num);
 
-      if (!minCheckMap.has(num)) {
-        minCheckMap.set(num, 0);
-        maxCheckMap.set(num, 0);
+      if (!checkMap.has(num)) {
+        checkMap.set(num, 0);
       }
     } else if (num === 1) {
-      while (maxCheckMap.get(maxHeap.top()) > 0) {
+      while (checkMap.get(maxHeap.top()) < 0) {
         const removedNum = maxHeap.pop();
-        maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) - 1);
+        checkMap.set(removedNum, checkMap.get(removedNum) + 1);
       }
 
-      const removedNum = maxHeap.pop();
-      if (removedNum) {
-        minCheckMap.set(removedNum, minCheckMap.get(removedNum) + 1);
+      const numToRemove = maxHeap.pop();
+      if (numToRemove) {
+        checkMap.set(numToRemove, checkMap.get(numToRemove) + 1);
       }
     } else if (num === -1) {
-      while (minCheckMap.get(minHeap.top()) > 0) {
+      while (checkMap.get(minHeap.top()) > 0) {
         const removedNum = minHeap.pop();
-        minCheckMap.set(removedNum, minCheckMap.get(removedNum) - 1);
+        checkMap.set(removedNum, checkMap.get(removedNum) - 1);
       }
 
-      const removedNum = minHeap.pop();
-      if (removedNum) {
-        maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) + 1);
+      const numToRemove = minHeap.pop();
+      if (numToRemove) {
+        checkMap.set(numToRemove, checkMap.get(numToRemove) - 1);
       }
     }
   }
 
-  while (maxCheckMap.get(maxHeap.top()) > 0) {
+  while (checkMap.get(maxHeap.top()) < 0) {
     const removedNum = maxHeap.pop();
-    maxCheckMap.set(removedNum, maxCheckMap.get(removedNum) - 1);
+    checkMap.set(removedNum, checkMap.get(removedNum) + 1);
   }
 
-  while (minCheckMap.get(minHeap.top()) > 0) {
+  while (checkMap.get(minHeap.top()) > 0) {
     const removedNum = minHeap.pop();
-    minCheckMap.set(removedNum, minCheckMap.get(removedNum) - 1);
+    checkMap.set(removedNum, checkMap.get(removedNum) - 1);
   }
 
   if (minHeap.size() === 0 && maxHeap.size() === 0) {

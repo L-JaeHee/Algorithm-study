@@ -10,7 +10,7 @@ compareFunction을 이용해 하나의 Heap 클래스로 최소힙, 최대힙 �
 아직 메모리초과 문제 존재 -> 해결
 해결 방법: 동기화를 위해 각각의 경우에 사용한 minCheckHeap, maxCheckHeap을 checkMap으로 하나로 줄이고
 maxHeap에서 삭제시 +1, minHeap에서 삭제시 -1
-로직을 도입하여 최소한의 메모리를 사용할 수 있도록 개선
+로직을 도입하여 최소한의 메모리를 사용할 수 있도록 개선 
 */
 
 class Heap {

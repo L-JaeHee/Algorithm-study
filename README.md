@@ -10,11 +10,13 @@
 * [자료 구조](BAEKJOON/data_structure)
 * [동적 프로그래밍](BAEKJOON/dynamic_programming)
 * [트리](BAEKJOON/tree)
+* [그리디](BAEKJOON/Greedy)
 <br><br>
 
 ## 사용 언어
 * python
 * javascript
+* C#
 <br><br>
 
 ## 출처 웹사이트
